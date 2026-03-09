@@ -1,9 +1,8 @@
 package main
 
 import (
+	"go-clean-project/internal/config"
 	"log"
-
-	"github.com/nick6969/go-clean-project/internal/config"
 )
 
 func main() {
