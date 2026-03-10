@@ -10,14 +10,19 @@ import (
 type Application struct {
 	Config *config.Config
 	Logger logger.Logger
+
+	UseCase *UseCase
 }
 
 func New(cfg *config.Config) (*Application, error) {
 	ctx := context.Background()
 	logger := logger.NewSLogger(ctx, cfg.Logger)
 
-	return &Application{
+	app := &Application{
 		Config: cfg,
 		Logger: logger,
-	}, nil
+	}
+
+	app.UseCase = NewUseCase(app)
+	return app, nil
 }
