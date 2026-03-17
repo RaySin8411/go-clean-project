@@ -1,8 +1,15 @@
 package main
 
 import (
-	"go-clean-project/internal/config"
+	"context"
 	"log"
+	"os"
+	"os/signal"
+	"syscall"
+
+	"go-clean-project/internal/application"
+	"go-clean-project/internal/config"
+	"go-clean-project/internal/http"
 )
 
 func main() {
@@ -11,6 +18,32 @@ func main() {
 		log.Fatalf("failed to load config: %v", err)
 	}
 
-	// 這裡先只把 config 印出，後續會使用到
-	log.Println(config)
+	app, err := application.New(config)
+	if err != nil {
+		log.Fatalf("failed to create application: %v", err)
+	}
+
+	server, err := http.NewServer(app)
+	if err != nil {
+		app.Logger.Warn(context.Background(), "Failed to create server", "error", err)
+		log.Fatalf("Failed to create server: %v", err)
+	}
+
+	err = app.Database.MigrateUp()
+	if err != nil {
+		log.Fatalf("failed to run migrations: %v", err)
+	}
+
+	server.Start()
+
+	systemShutdownHandle()
+
+	server.Shutdown()
+}
+
+func systemShutdownHandle() {
+	quit := make(chan os.Signal, 1)
+	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
+	<-quit
+	log.Println("Shutdown Server ...")
 }
