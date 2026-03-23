@@ -16,4 +16,5 @@ func registerAPIUserRoutes(r gin.IRouter, app *application.Application) {
 	// 將 app.UseCase.User.Register 這個已建立好的 UseCase 實例，
 	// 作為參數傳遞給 uc.Register 方法。
 	r.POST("register", uc.Register(app.UseCase.User.Register))
+	r.POST("login", uc.Login(app.UseCase.User.Login))
 }
