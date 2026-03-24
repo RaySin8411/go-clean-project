@@ -1,7 +1,7 @@
 
 # 第一階段：建置環境
 # 使用官方的 Go 映像檔作為建置環境
-FROM golang:1.24.6-alpine AS builder
+FROM golang:1.25.3-alpine AS builder
 
 # 設定工作目錄
 WORKDIR /app
